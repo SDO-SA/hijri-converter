@@ -1,0 +1,46 @@
+{
+    "name": "sdo-sa/hijri-converter",
+    "description": "Accurate Hijri (Umm al-Qura) ⇄ Gregorian date conversion for PHP, with optional Laravel support.",
+    "keywords": ["hijri", "gregorian", "umm-al-qura", "calendar", "date", "islamic", "laravel"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2"
+    },
+    "require-dev": {
+        "pestphp/pest": "^3.0",
+        "orchestra/testbench": "^9.0",
+        "nesbot/carbon": "^3.0"
+    },
+    "suggest": {
+        "nesbot/carbon": "Enables Gregorian::toCarbon() and Carbon::toHijri() macros.",
+        "illuminate/support": "Enables the Laravel service provider and Hijri facade."
+    },
+    "autoload": {
+        "psr-4": {
+            "SDOSA\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SDOSA\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SDOSA\\Laravel\\HijriServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "pest"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        },
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
