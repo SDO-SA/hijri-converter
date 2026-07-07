@@ -17,7 +17,8 @@ namespace SDOSA;
  *     Hijri::today();                        // HijriDate
  *
  * The returned value objects carry the rich API (format, monthName, dayName,
- * notation, weekday, toCarbon, ...). Construct them directly if you prefer.
+ * notation, weekday, toCarbon, ...). Build them with ::make() / ::fromString()
+ * if you prefer.
  */
 final class Hijri
 {

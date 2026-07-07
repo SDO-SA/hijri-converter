@@ -8,8 +8,8 @@ namespace SDOSA\Data;
  * Umm al-Qura calendar dataset.
  *
  * The official lunar calendar of Saudi Arabia. Conversions are exact (not
- * arithmetic approximations) because every supported Hijri month start is
- * tabulated below as a Reduced Julian Day (RJD) number.
+ * arithmetic approximations) because the first day of every supported Hijri
+ * month is tabulated below as a Reduced Julian Day (RJD) number.
  *
  * Data derived from the `hijri-converter` / `hijridate` project
  * (https://github.com/dralshehri/hijridate), MIT licensed. See LICENSE.

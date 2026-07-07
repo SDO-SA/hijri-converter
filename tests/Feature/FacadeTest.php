@@ -18,8 +18,8 @@ it('accepts DateTime input', function () {
 });
 
 it('accepts value objects (idempotent)', function () {
-    $g = new GregorianDate(1982, 12, 2);
-    $h = new HijriDate(1403, 2, 17);
+    $g = GregorianDate::make(1982, 12, 2);
+    $h = HijriDate::make(1403, 2, 17);
     expect(Hijri::toHijri($g)->toIso())->toBe('1403-02-17')
         ->and(Hijri::toGregorian($h)->toIso())->toBe('1982-12-02');
 });

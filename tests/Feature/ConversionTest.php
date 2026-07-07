@@ -16,7 +16,7 @@ it('converts Hijri to Gregorian', function (string $greg, string $hijri) {
 it('round-trips Hijri -> Gregorian -> Hijri across the range', function () {
     foreach ([1343, 1400, 1445, 1500] as $year) {
         foreach ([1, 6, 12] as $month) {
-            $h = new HijriDate($year, $month, 1);
+            $h = HijriDate::make($year, $month, 1);
             $back = $h->toGregorian()->toHijri();
             expect($back->equals($h))->toBeTrue("failed for {$h->toIso()}");
         }
@@ -31,15 +31,16 @@ it('round-trips Gregorian -> Hijri -> Gregorian', function () {
 });
 
 it('exposes month and year length', function () {
-    $h = new HijriDate(1445, 9, 1);
+    $h = HijriDate::make(1445, 9, 1);
     expect($h->monthLength())->toBeIn([29, 30])
         ->and($h->yearLength())->toBeIn([354, 355]);
 });
 
 it('computes weekday and day name', function () {
     // 1982-12-02 was a Thursday.
-    $g = new GregorianDate(1982, 12, 2);
-    expect($g->isoWeekday())->toBe(4)
+    $g = GregorianDate::make(1982, 12, 2);
+    expect($g->isoWeekday())->toBe(4)          // ISO: Monday = 1
+        ->and($g->weekday())->toBe(5)          // Saudi week: Sunday = 1, so Thursday = 5
         ->and($g->dayName('en'))->toBe('Thursday')
         ->and($g->toHijri()->dayName('en'))->toBe('Thursday');
 });

@@ -8,16 +8,25 @@ use SDOSA\Data\UmmAlQura;
 use SDOSA\Exceptions\DateOutOfRange;
 use SDOSA\Exceptions\InvalidHijriDate;
 use SDOSA\Locales\LocaleRegistry;
+use SDOSA\Support\FormatsDate;
 use SDOSA\Support\Julian;
 
 /**
  * An immutable Umm al-Qura Hijri date.
  *
- * Usually obtained via {@see Hijri::toHijri()}; can also be constructed directly.
+ * Build one with a named constructor — never `new`:
+ *
+ *     HijriDate::make(1403, 2, 17);      // from parts
+ *     HijriDate::fromString('1403-02-17');
+ *     HijriDate::today();
+ *
+ * Most callers get one back from {@see Hijri::toHijri()} instead.
  */
 final class HijriDate implements \Stringable
 {
-    public function __construct(
+    use FormatsDate;
+
+    private function __construct(
         private readonly int $year,
         private readonly int $month,
         private readonly int $day,
@@ -25,33 +34,25 @@ final class HijriDate implements \Stringable
         $this->validate();
     }
 
+    /** Build from year, month, and day. */
+    public static function make(int $year, int $month, int $day): self
+    {
+        return new self($year, $month, $day);
+    }
+
     /** Parse a "YYYY-MM-DD" string. */
     public static function fromString(string $date): self
     {
-        [$y, $m, $d] = self::parseParts($date);
+        $parts = self::splitYmd($date)
+            ?? throw new InvalidHijriDate("Cannot parse Hijri date '{$date}'; expected YYYY-MM-DD.");
 
-        return new self($y, $m, $d);
+        return self::make(...$parts);
     }
 
     /** Today's Hijri date (system timezone). */
     public static function today(): self
     {
         return GregorianDate::today()->toHijri();
-    }
-
-    public function year(): int
-    {
-        return $this->year;
-    }
-
-    public function month(): int
-    {
-        return $this->month;
-    }
-
-    public function day(): int
-    {
-        return $this->day;
     }
 
     /** Number of days in this date's month (29 or 30). */
@@ -83,20 +84,6 @@ final class HijriDate implements \Stringable
         return GregorianDate::fromOrdinal(Julian::jdnToOrdinal($this->toJulian()));
     }
 
-    /** ISO weekday: 1 (Monday) .. 7 (Sunday). */
-    public function isoWeekday(): int
-    {
-        $ordinal = Julian::jdnToOrdinal($this->toJulian());
-
-        return (($ordinal - 1) % 7) + 1;
-    }
-
-    /** Weekday: 0 (Monday) .. 6 (Sunday). */
-    public function weekday(): int
-    {
-        return $this->isoWeekday() - 1;
-    }
-
     public function monthName(?string $locale = null): string
     {
         return LocaleRegistry::get($locale)->hijriMonthName($this->month);
@@ -110,40 +97,6 @@ final class HijriDate implements \Stringable
     public function notation(?string $locale = null): string
     {
         return LocaleRegistry::get($locale)->hijriNotation();
-    }
-
-    /** "DD<sep>MM<sep>YYYY" (zero-padded unless $padding is false). */
-    public function format(string $separator = '/', bool $padding = true): string
-    {
-        $parts = $padding
-            ? [sprintf('%02d', $this->day), sprintf('%02d', $this->month), sprintf('%04d', $this->year)]
-            : [$this->day, $this->month, $this->year];
-
-        return implode($separator, $parts);
-    }
-
-    /** "YYYY-MM-DD". */
-    public function toIso(): string
-    {
-        return sprintf('%04d-%02d-%02d', $this->year, $this->month, $this->day);
-    }
-
-    public function equals(self $other): bool
-    {
-        return $this->year === $other->year
-            && $this->month === $other->month
-            && $this->day === $other->day;
-    }
-
-    /** -1, 0, or 1. */
-    public function compareTo(self $other): int
-    {
-        return $this->toJulian() <=> $other->toJulian();
-    }
-
-    public function __toString(): string
-    {
-        return $this->toIso();
     }
 
     private function monthIndex(): int
@@ -173,15 +126,5 @@ final class HijriDate implements \Stringable
                 "Hijri day must be in 1..{$length} for {$this->year}-{$this->month}, got {$this->day}."
             );
         }
-    }
-
-    /** @return array{0:int,1:int,2:int} */
-    private static function parseParts(string $date): array
-    {
-        if (!preg_match('/^(\d{1,4})-(\d{1,2})-(\d{1,2})$/', trim($date), $m)) {
-            throw new InvalidHijriDate("Cannot parse Hijri date '{$date}'; expected YYYY-MM-DD.");
-        }
-
-        return [(int) $m[1], (int) $m[2], (int) $m[3]];
     }
 }
