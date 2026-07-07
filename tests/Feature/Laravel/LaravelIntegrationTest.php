@@ -13,7 +13,7 @@ it('registers Carbon macros', function () {
 });
 
 it('converts Gregorian to Carbon', function () {
-    expect((new GregorianDate(1982, 12, 2))->toCarbon()->format('Y-m-d'))->toBe('1982-12-02');
+    expect((GregorianDate::make(1982, 12, 2))->toCarbon()->format('Y-m-d'))->toBe('1982-12-02');
 });
 
 it('loads the package config default locale', function () {

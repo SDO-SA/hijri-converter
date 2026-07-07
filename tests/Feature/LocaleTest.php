@@ -9,33 +9,33 @@ use SDOSA\Locales\LocaleRegistry;
 afterEach(fn () => LocaleRegistry::setDefault('ar'));
 
 it('returns Arabic names by default', function () {
-    expect((new HijriDate(1445, 9, 1))->monthName())->toBe('رمضان');
+    expect((HijriDate::make(1445, 9, 1))->monthName())->toBe('رمضان');
 });
 
 it('returns English names when requested', function () {
-    expect((new HijriDate(1445, 9, 1))->monthName('en'))->toBe('Ramadan');
+    expect((HijriDate::make(1445, 9, 1))->monthName('en'))->toBe('Ramadan');
 });
 
 it('honours an overridden default locale', function () {
     LocaleRegistry::setDefault('en');
-    expect((new HijriDate(1445, 9, 1))->monthName())->toBe('Ramadan');
+    expect((HijriDate::make(1445, 9, 1))->monthName())->toBe('Ramadan');
 });
 
 it('falls back to default for an unknown locale', function () {
-    expect((new HijriDate(1445, 9, 1))->monthName('zz'))->toBe('رمضان');
+    expect((HijriDate::make(1445, 9, 1))->monthName('zz'))->toBe('رمضان');
 });
 
 it('normalises locale tags like en-US', function () {
-    expect((new HijriDate(1445, 9, 1))->monthName('en-US'))->toBe('Ramadan');
+    expect((HijriDate::make(1445, 9, 1))->monthName('en-US'))->toBe('Ramadan');
 });
 
 it('provides notations', function () {
-    expect((new HijriDate(1445, 9, 1))->notation())->toBe('هـ')
-        ->and((new HijriDate(1445, 9, 1))->notation('en'))->toBe('AH');
+    expect((HijriDate::make(1445, 9, 1))->notation())->toBe('هـ')
+        ->and((HijriDate::make(1445, 9, 1))->notation('en'))->toBe('AH');
 });
 
 it('bundles Bengali and Turkish', function () {
-    $h = new HijriDate(1445, 9, 1); // Ramadan
+    $h = HijriDate::make(1445, 9, 1); // Ramadan
     expect($h->monthName('bn'))->toBe('রমজান')
         ->and($h->monthName('tr'))->toBe('Ramazan')
         ->and($h->notation('tr'))->toBe('Hicri');
